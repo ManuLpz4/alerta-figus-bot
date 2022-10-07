@@ -16,15 +16,11 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 
 class Product {
-  title: string;
-  price: string;
-  link: string;
-
-  constructor(title: string, price: string, link: string) {
-    this.title = title;
-    this.price = price;
-    this.link = link;
-  }
+  constructor(
+    private title: string,
+    private price: string,
+    private link: string
+  ) { }
 }
 
 async function checkAvailableProducts(): Promise<void> {
