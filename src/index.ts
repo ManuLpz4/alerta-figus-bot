@@ -37,10 +37,11 @@ async function checkAvailableProducts(): Promise<void> {
       const isAvailable = !product.text().includes("Sin stock");
 
       if (isAvailable) {
-        const title = product.find(".item-link").first().attr("title")!;
-        const price = product.find(".item-price").first().text().trim();
-        const link = product.find(".item-link").first().attr("href")!;
-        const availableProduct = new Product(title, price, link);
+        const availableProduct = new Product(
+          product.find(".item-link").first().attr("title")!,
+          product.find(".item-price").first().text().trim(),
+          product.find(".item-link").first().attr("href")!,
+        );
 
         availableProducts.push(availableProduct);
       }
