@@ -14,16 +14,17 @@
 
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { TwitterApi } from "twitter-api-v2";
+import "dotenv/config";
 
-class Product {
-  constructor(
-    private title: string,
-    private price: string,
-    private link: string
-  ) { }
-}
+const twitterClient = new TwitterApi({
+  appKey: process.env.TWITTER_CONSUMER_KEY as string,
+  appSecret: process.env.TWITTER_CONSUMER_SECRET as string,
+  accessToken: process.env.TWITTER_ACCESS_TOKEN as string,
+  accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET as string,
+});
 
-async function checkAvailableProducts(): Promise<void> {
+async function getAvailableProducts(): Promise<Product[]> {
   const url = "https://www.zonakids.com/productos";
 
   try {
@@ -40,19 +41,35 @@ async function checkAvailableProducts(): Promise<void> {
         const availableProduct = new Product(
           product.find(".item-link").first().attr("title")!,
           product.find(".item-price").first().text().trim(),
-          product.find(".item-link").first().attr("href")!,
+          product.find(".item-link").first().attr("href")!
         );
 
         availableProducts.push(availableProduct);
       }
     });
 
-    if (!availableProducts.length) return console.log("Aún no hay stock");
-
-    console.log(availableProducts);
+    return availableProducts;
   } catch (error) {
     throw Error("Me mataste, mostro");
   }
 }
 
-setInterval(checkAvailableProducts, 60_000);
+setInterval(async () => {
+  try {
+    const availableProducts = await getAvailableProducts();
+
+    if (availableProducts.length) {
+      let text =
+        "🚨 ¡Contra todo pronóstico hay productos disponibles en la página oficial de @PaniniArg!";
+
+      availableProducts.forEach((product, index) => {
+        text.concat(
+          `\n\n\\u003${index} ${product.title} (${product.price}) 👇🏻\n${product.link}`
+        );
+      });
+      twitterClient.v2.tweet(text);
+    }
+  } catch (_) {
+    console.log("Algo reventó pero vamos a seguir intentando");
+  }
+}, 60_000);
