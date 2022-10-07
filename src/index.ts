@@ -58,4 +58,4 @@ async function checkAvailableProducts(): Promise<void> {
   }
 }
 
-setInterval(checkAvailableProducts, 1_000);
+setInterval(checkAvailableProducts, 60_000);
