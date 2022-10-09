@@ -16,6 +16,7 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import { TwitterApi } from "twitter-api-v2";
 import "dotenv/config";
+import Product from "./domain/entities/Product.js";
 
 const twitterClient = new TwitterApi({
   appKey: process.env.TWITTER_CONSUMER_KEY as string,
