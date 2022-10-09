@@ -70,7 +70,8 @@ setInterval(async () => {
       });
       twitterClient.v2.tweet(text);
     }
-  } catch (_) {
+  } catch (e) {
+    console.log(e);
     console.log("Algo reventó pero vamos a seguir intentando");
   }
 }, 60_000);
